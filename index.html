@@ -1,0 +1,1402 @@
+```html
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Wellness Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg-1:#eef2ff; --bg-2:#eafaf5; --bg-3:#fdf1fb;
+    --card-bg:rgba(255,255,255,0.6); --card-border:rgba(255,255,255,0.85);
+    --text-1:#1b2030; --text-2:#5a6172; --text-3:#8a91a3;
+    --accent-blue:#4F6EF7; --accent-teal:#12C6B0; --accent-purple:#9B5DE5;
+    --accent-pink:#F7318C; --accent-amber:#FFB627;
+    --shadow-soft:0 22px 48px -22px rgba(90,110,150,0.4);
+    --shadow-hover:0 30px 60px -20px rgba(90,110,150,0.5);
+    --blob-a:#cddcfb; --blob-b:#c7f1e6; --blob-c:#f3d7f7;
+    --ring-track:rgba(120,130,150,0.15); --pill-bg:rgba(255,255,255,0.55);
+  }
+  [data-theme="dark"]{
+    --bg-1:#080b16; --bg-2:#08161c; --bg-3:#130c22;
+    --card-bg:rgba(24,30,48,0.58); --card-border:rgba(255,255,255,0.1);
+    --text-1:#f1f3fa; --text-2:#aeb5c8; --text-3:#7d8499;
+    --accent-blue:#7C97FF; --accent-teal:#2EE6CE; --accent-purple:#BC93FF;
+    --accent-pink:#FF62A6; --accent-amber:#FFC857;
+    --shadow-soft:0 22px 48px -20px rgba(0,0,0,0.6);
+    --shadow-hover:0 30px 60px -18px rgba(0,0,0,0.7);
+    --blob-a:#101c36; --blob-b:#0b2a28; --blob-c:#1e1638;
+    --ring-track:rgba(255,255,255,0.09); --pill-bg:rgba(255,255,255,0.07);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Vazirmatn', sans-serif;
+    background:linear-gradient(150deg,var(--bg-1),var(--bg-2) 55%, var(--bg-3));
+    color:var(--text-1); min-height:100vh; overflow-x:hidden;
+    transition:background 0.6s ease, color 0.4s ease; position:relative;
+  }
+  .top-accent{position:fixed;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent-blue),var(--accent-teal),var(--accent-purple),var(--accent-pink),var(--accent-amber));z-index:50;background-size:200% 100%;animation:flow 8s linear infinite;}
+  @keyframes flow{ to{background-position:200% 0;} }
+  .bg-scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+  .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.65;animation:drift 22s ease-in-out infinite;}
+  .blob.a{width:460px;height:460px;background:var(--blob-a);top:-130px;inset-inline-end:-110px;}
+  .blob.b{width:420px;height:420px;background:var(--blob-b);bottom:-150px;inset-inline-start:-90px;animation-delay:-7s;}
+  .blob.c{width:360px;height:360px;background:var(--blob-c);top:38%;left:38%;animation-delay:-14s;}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-25px) scale(1.06);}66%{transform:translate(-25px,20px) scale(0.95);}}
+  .ring-field{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+  .orbit{position:absolute;border:1px solid var(--ring-track);border-radius:50%;animation:spin 100s linear infinite;}
+  .orbit.o1{width:920px;height:920px;}
+  .orbit.o2{width:1220px;height:1220px;animation-duration:140s;animation-direction:reverse;}
+  .orbit.o3{width:660px;height:660px;animation-duration:75s;}
+  @keyframes spin{ to{transform:rotate(360deg);} }
+  .wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:42px 24px 90px;}
+  header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:36px;}
+  .brand{display:flex;align-items:center;gap:16px;}
+  .logo{width:58px;height:58px;border-radius:19px;flex-shrink:0;background:linear-gradient(135deg,var(--accent-blue),var(--accent-pink));box-shadow:0 16px 32px -10px rgba(120,90,230,0.55);display:flex;align-items:center;justify-content:center;}
+  .logo svg{width:28px;height:28px;}
+  .brand-text h1{font-size:1.55rem;font-weight:800;margin:0 0 4px;letter-spacing:-0.01em;}
+  .brand-text p{margin:0;color:var(--text-2);font-size:0.92rem;}
+  .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .icon-btn{height:50px;padding:0 18px;border-radius:16px;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:var(--text-1);display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;box-shadow:var(--shadow-soft);transition:transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease, color 0.3s ease;font-family:inherit;font-size:0.85rem;font-weight:600;}
+  .icon-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);}
+  .icon-btn svg{width:18px;height:18px;flex-shrink:0;transition:transform 0.5s ease;}
+  .icon-btn.is-active{background:linear-gradient(135deg,var(--accent-purple),var(--accent-blue));border-color:transparent;color:#fff;}
+  .icon-btn.is-loading svg{animation:spin 0.8s linear infinite;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
+  @media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+  body.focus-mode .grid{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:980px){body.focus-mode .grid{grid-template-columns:1fr;}}
+  .card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:28px;padding:28px 26px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:var(--shadow-soft);animation:floaty 6s ease-in-out infinite;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:box-shadow 0.35s ease, transform 0.35s ease, opacity 0.32s ease;}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--card-accent);}
+  .card.c1{--card-accent:linear-gradient(90deg,var(--accent-blue),var(--accent-teal));}
+  .card.c2{--card-accent:linear-gradient(90deg,var(--accent-amber),var(--accent-pink));}
+  .card.c3{--card-accent:linear-gradient(90deg,var(--accent-purple),var(--accent-blue));}
+  .card.c4{--card-accent:linear-gradient(90deg,var(--accent-pink),var(--accent-purple));}
+  .card.c5{--card-accent:linear-gradient(90deg,var(--accent-teal),var(--accent-amber));}
+  .card.c6{--card-accent:linear-gradient(90deg,var(--accent-blue),var(--accent-purple));}
+  .card.c7{--card-accent:linear-gradient(90deg,var(--accent-amber),var(--accent-teal));}
+  .card.c8{--card-accent:linear-gradient(90deg,var(--accent-pink),var(--accent-blue));}
+  .card:hover{box-shadow:var(--shadow-hover);transform:translateY(-6px);}
+  .card:nth-child(2){animation-delay:-2s;} .card:nth-child(3){animation-delay:-4s;}
+  .card:nth-child(4){animation-delay:-1s;} .card:nth-child(5){animation-delay:-3s;} .card:nth-child(6){animation-delay:-5s;}
+  .card:nth-child(7){animation-delay:-1.5s;} .card:nth-child(8){animation-delay:-3.5s;}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+  .card:hover{animation-play-state:paused;}
+  .card.hide-anim{opacity:0;transform:scale(0.9);pointer-events:none;}
+  .card-title{font-size:1.05rem;font-weight:700;margin:0 0 24px;display:flex;align-items:center;gap:12px;}
+  .card-icon{width:40px;height:40px;border-radius:13px;flex-shrink:0;background:var(--card-accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px -8px rgba(90,90,150,0.5);}
+  .card-icon svg{width:19px;height:19px;}
+  .donut-wrap{position:relative;width:184px;height:184px;margin:6px auto 4px;}
+  .donut-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+  .donut-track{fill:none;stroke:var(--ring-track);stroke-width:14;}
+  .donut-value{fill:none;stroke:url(#grad1);stroke-width:14;stroke-linecap:round;stroke-dasharray:502.4;stroke-dashoffset:502.4;transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1);}
+  .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .donut-center .num{font-size:2.2rem;font-weight:800;letter-spacing:-0.02em;}
+  .donut-center .lbl{font-size:0.78rem;color:var(--text-2);margin-top:3px;}
+  .motivation-box{text-align:center;background:linear-gradient(135deg, rgba(18,198,176,0.16), rgba(79,110,247,0.12));border:1px solid rgba(18,198,176,0.32);padding:16px 18px;border-radius:18px;color:var(--text-1);font-size:0.92rem;line-height:1.9;margin-top:auto;}
+  .alert-box{display:flex;gap:13px;align-items:center;background:rgba(255,182,39,0.16);border:1px solid rgba(255,182,39,0.4);padding:14px 16px;border-radius:16px;margin-bottom:20px;}
+  .alert-box .a-icon{width:36px;height:36px;flex-shrink:0;border-radius:11px;background:rgba(255,182,39,0.32);display:flex;align-items:center;justify-content:center;color:#a9711b;}
+  [data-theme="dark"] .alert-box .a-icon{color:var(--accent-amber);}
+  .alert-box .a-icon svg{width:18px;height:18px;}
+  .alert-box strong{display:block;font-weight:700;margin-bottom:2px;font-size:0.9rem;}
+  .alert-box span{color:var(--text-2);font-size:0.82rem;}
+  .suggest-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;}
+  .suggest-list li{display:flex;gap:14px;align-items:center;padding:13px 14px;background:var(--pill-bg);border:1px solid var(--card-border);border-radius:16px;font-size:0.87rem;line-height:1.7;transition:transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;}
+  .suggest-list li:hover{transform:translateY(-2px);box-shadow:0 12px 26px -16px rgba(90,110,150,0.45);background:var(--card-bg);}
+  .suggest-list .s-emoji{width:34px;height:34px;flex-shrink:0;border-radius:10px;background:rgba(79,110,247,0.15);display:flex;align-items:center;justify-content:center;font-size:1.05rem;}
+  .btn{border:none;border-radius:14px;padding:13px 18px;font-family:inherit;font-weight:700;font-size:0.87rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;color:#fff;}
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.05);box-shadow:0 16px 30px -14px rgba(0,0,0,0.4);}
+  .btn:active{transform:translateY(0);}
+  .btn svg{width:17px;height:17px;}
+  .btn.grad-amber{background:linear-gradient(135deg,var(--accent-amber),var(--accent-pink));color:#2c1c07;}
+  .btn.grad-teal{background:linear-gradient(135deg,var(--accent-teal),var(--accent-blue));}
+  .btn.grad-purple{background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink));}
+  .btn.full{width:100%;margin-top:auto;}
+  .btn[disabled]{opacity:0.6;cursor:default;transform:none !important;}
+  .bars{display:flex;align-items:flex-end;justify-content:space-around;height:160px;gap:12px;margin-bottom:6px;}
+  .bar-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;height:100%;justify-content:flex-end;}
+  .bar-track{width:100%;max-width:42px;height:100%;background:var(--ring-track);border-radius:12px;overflow:hidden;display:flex;align-items:flex-end;}
+  .bar-fill{width:100%;border-radius:12px;height:0%;transition:height 1.1s cubic-bezier(.22,1,.36,1);}
+  .bar-fill.work{background:linear-gradient(180deg,var(--accent-blue),#3a55c9);}
+  .bar-fill.fun{background:linear-gradient(180deg,var(--accent-purple),#7238c9);}
+  .bar-fill.rest{background:linear-gradient(180deg,var(--accent-teal),#0d9f8d);}
+  .bar-label{font-size:0.8rem;color:var(--text-2);}
+  .bar-value{font-size:0.75rem;color:var(--text-3);}
+  .prediction-text{text-align:center;margin-top:18px;color:var(--text-2);font-size:0.85rem;line-height:1.8;padding-top:16px;border-top:1px dashed var(--card-border);}
+  .app-list{display:flex;flex-direction:column;gap:14px;}
+  .app-item{display:flex;align-items:center;gap:13px;}
+  .app-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;}
+  .app-info{flex:1;min-width:0;}
+  .app-name-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:8px;}
+  .app-name{font-size:0.85rem;font-weight:600;color:var(--text-1);}
+  .app-time{font-size:0.76rem;color:var(--text-3);flex-shrink:0;}
+  .app-bar-wrap{height:8px;background:var(--ring-track);border-radius:10px;overflow:hidden;}
+  .app-bar{height:100%;width:0%;border-radius:10px;transition:width 1s cubic-bezier(.22,1,.36,1);}
+  .goal-field-row{display:flex;gap:10px;margin-bottom:20px;}
+  .goal-field{flex:1;display:flex;align-items:center;background:var(--pill-bg);border:1px solid var(--card-border);border-radius:14px;padding-inline-start:16px;padding-inline-end:6px;gap:6px;}
+  .goal-field svg{width:17px;height:17px;color:var(--text-3);flex-shrink:0;}
+  .goal-field input{border:none;background:transparent;flex:1;font-family:inherit;font-size:0.92rem;color:var(--text-1);padding:12px 4px;min-width:0;}
+  .goal-field input:focus{outline:none;}
+  .goal-field .unit{font-size:0.78rem;color:var(--text-3);flex-shrink:0;padding-inline-end:4px;}
+  .goal-progress{position:relative;height:14px;background:var(--ring-track);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+  .goal-fill{position:relative;height:100%;width:0%;background:linear-gradient(90deg,var(--accent-teal),var(--accent-blue));border-radius:10px;transition:width 1s cubic-bezier(.22,1,.36,1);overflow:hidden;}
+  .goal-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent);animation:shimmer 2.3s linear infinite;}
+  @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+  .goal-text{font-size:0.88rem;color:var(--text-2);text-align:center;}
+  .goal-text strong{color:var(--text-1);font-weight:700;}
+  .report-desc{color:var(--text-2);font-size:0.89rem;line-height:1.9;margin:0 0 22px;}
+  .sleep-row{display:flex;gap:14px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+  .sleep-row label{display:flex;align-items:center;gap:8px;font-size:0.9rem;color:var(--text-2);flex:1;min-width:140px;}
+  .sleep-row input[type="time"]{background:var(--pill-bg);border:1px solid var(--card-border);border-radius:12px;padding:10px 12px;color:var(--text-1);font-family:inherit;font-size:0.9rem;flex:1;min-width:100px;}
+  .sleep-row input[type="time"]:focus{outline:2px solid var(--accent-blue);outline-offset:2px;}
+  .lang-select{background:var(--pill-bg);border:1px solid var(--card-border);border-radius:12px;padding:10px 12px;color:var(--text-1);font-family:inherit;font-size:0.85rem;cursor:pointer;width:100%;}
+  .lang-select:focus{outline:2px solid var(--accent-blue);outline-offset:2px;}
+  .sleep-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+  .sleep-stat{background:var(--pill-bg);border-radius:14px;padding:14px;text-align:center;border:1px solid var(--card-border);}
+  .sleep-stat .label{font-size:0.7rem;color:var(--text-3);display:block;margin-bottom:4px;}
+  .sleep-stat .value{font-size:1.2rem;font-weight:700;color:var(--text-1);}
+  .sleep-stat .value.good{color:var(--accent-teal);}
+  .sleep-stat .value.warn{color:var(--accent-amber);}
+  .sleep-stat .value.danger{color:var(--accent-pink);}
+  footer{text-align:center;margin-top:60px;color:var(--text-3);font-size:0.8rem;}
+  @media (prefers-reduced-motion: reduce){.card,.blob,.orbit,.top-accent{animation:none !important;}}
+  .save-indicator{position:fixed;bottom:30px;inset-inline-end:30px;background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:16px;padding:14px 22px;box-shadow:var(--shadow-soft);display:flex;align-items:center;gap:12px;font-size:0.9rem;z-index:100;transform:translateY(80px);opacity:0;transition:all 0.5s cubic-bezier(.22,1,.36,1);pointer-events:none;}
+  .save-indicator.show{transform:translateY(0);opacity:1;}
+  .save-indicator svg{width:20px;height:20px;color:var(--accent-teal);}
+</style>
+</head>
+<body data-theme="light" data-lang="fa">
+<div class="top-accent"></div>
+<div class="bg-scene">
+  <div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
+  <div class="ring-field"><div class="orbit o1"></div><div class="orbit o2"></div><div class="orbit o3"></div></div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9c0-.5-.04-1-.11-1.47A5.5 5.5 0 0 1 12 3z"></path><path d="M8 13a2 2 0 1 0 0-4"></path></svg></div>
+      <div class="brand-text">
+        <h1 id="brandTitle">تحلیلگر سلامت دیجیتال</h1>
+        <p id="brandSub">نگاهی آرام به تعادل بین کار، سرگرمی و استراحت شما</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <select class="lang-select" id="langSelect">
+        <option value="fa">فارسی</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="it">Italiano</option>
+        <option value="pt">Português</option>
+        <option value="ru">Русский</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+        <option value="ar">العربية</option>
+      </select>
+      <button class="icon-btn" id="themeToggle" aria-label="theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <span>حالت شب</span>
+      </button>
+      <button class="icon-btn" id="focusToggle" aria-label="focus">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>
+        <span>حالت تمرکز</span>
+      </button>
+      <button class="icon-btn" id="refreshBtn" aria-label="refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card c1 core-card">
+      <h2 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></span><span id="balanceTitle">امتیاز تعادل</span></h2>
+      <div class="donut-wrap">
+        <svg viewBox="0 0 180 180">
+          <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#12C6B0"/><stop offset="100%" stop-color="#4F6EF7"/></linearGradient></defs>
+          <circle class="donut-track" cx="90" cy="90" r="80"></circle>
+          <circle class="donut-value" id="donutValue" cx="90" cy="90" r="80"></circle>
+        </svg>
+        <div class="donut-center">
+          <div class="num" id="balanceNum">۰٪</div>
+          <div class="lbl" id="balanceLabel">تعادل امروز</div>
+        </div>
+      </div>
+      <div class="motivation-box" id="motivationBox"></div>
+    </section>
+
+    <section class="card c2 core-card">
+      <h2 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"></path></svg></span><span id="suggestTitle">پیشنهادهای هوشمند</span></h2>
+      <div class="alert-box">
+        <div class="a-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+        <div><strong id="alertTitle">هشدار اسکرول بی‌هدف</strong><span id="alertDesc"></span></div>
+      </div>
+      <ul class="suggest-list" id="suggestList"></ul>
+      <button class="btn grad-amber full" id="notifyBtn" style="margin-top:20px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span id="notifyBtnText">فعال‌سازی یادآور مرورگر</span>
+      </button>
+    </section>
+
+    <section class="card c3 core-card">
+      <h2 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span><span id="predictTitle">پیش‌بینی آینده</span></h2>
+      <div class="bars">
+        <div class="bar-col">
+          <span class="bar-value" id="workValue"></span>
+          <div class="bar-track"><div class="bar-fill work" id="workBar"></div></div>
+          <span class="bar-label" id="workLabel">کار</span>
+        </div>
+        <div class="bar-col">
+          <span class="bar-value" id="funValue"></span>
+          <div class="bar-track"><div class="bar-fill fun" id="funBar"></div></div>
+          <span class="bar-label" id="funLabel">سرگرمی</span>
+        </div>
+        <div class="bar-col">
+          <span class="bar-value" id="restValue"></span>
+          <div class="bar-track"><div class="bar-fill rest" id="restBar"></div></div>
+          <span class="bar-label" id="restLabel">استراحت</span>
+        </div>
+      </div>
+      <div class="prediction-text" id="predictionText"></div>
+    </section>
+
+    <section class="card c4">
+      <h2 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span><span id="appTitle">مصرف اپلیکیشن‌ها</span></h2>
+      <div class="app-list" id="appList"></div>
+    </section>
+
+    <section class="card c5">
+      <h2 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span><span id="goalTitle">هدف‌گذاری روزانه</span></h2>
+      <div class="goal-field-row">
+        <div class="goal-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <input type="number" id="goalInput" placeholder="مثلاً ۲" min="0.5" step="0.5">
+          <span class="unit" id="goalUnit">ساعت کار مفید</span>
+        </div>
+        <button class="btn grad-teal" id="setGoalBtn"><span id="goalSetBtnText">ثبت</span></button>
+      </div>
+      <div class="goal-progress"><div class="goal-fill" id="goalFill"></div></div>
+      <div class="goal-text" id="goalText"></div>
+    </section>
+
+    <section class="card c6">
+      <h2 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span><span id="reportTitle">گزارش هفتگی</span></h2>
+      <p class="report-desc" id="reportDesc">گزارش کامل رفتارهای دیجیتال خود را به صورت تصویر دریافت کنید و با دیگران به اشتراک بگذارید</p>
+      <button class="btn grad-purple full" id="downloadReportBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span id="downloadBtnText">دانلود گزارش</span>
+      </button>
+    </section>
+
+    <section class="card c7">
+      <h2 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"></path></svg></span><span id="sleepTitle">خواب و ریتم شبانه‌روزی</span></h2>
+      <div class="sleep-row">
+        <label>
+          <span id="sleepLabel">⏰ زمان خواب</span>
+          <input type="time" id="sleepTime" value="23:30">
+        </label>
+        <label>
+          <span id="wakeLabel">☀️ زمان بیداری</span>
+          <input type="time" id="wakeTime" value="07:30">
+        </label>
+      </div>
+      <button class="btn grad-teal" id="saveSleepBtn" style="width:100%;margin-bottom:16px;"><span id="saveSleepText">💾 ذخیره تنظیمات خواب</span></button>
+      <div class="sleep-stats">
+        <div class="sleep-stat"><span class="label" id="durationLabel">⏱️ مدت خواب</span><span class="value good" id="sleepDuration">۸ ساعت</span></div>
+        <div class="sleep-stat"><span class="label" id="qualityLabel">🌟 کیفیت خواب</span><span class="value good" id="sleepQuality">عالی</span></div>
+        <div class="sleep-stat"><span class="label" id="bestTimeLabel">💡 بهترین زمان خواب</span><span class="value" id="bestTime">۲۳:۰۰</span></div>
+        <div class="sleep-stat"><span class="label" id="cycleLabel">🔄 سیکل‌های کامل</span><span class="value" id="sleepCycles">۵ سیکل</span></div>
+      </div>
+    </section>
+
+    <section class="card c8">
+      <h2 class="card-title"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span><span id="profileTitle">پروفایل و تنظیمات</span></h2>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <input type="text" id="userName" placeholder="نام شما" style="flex:1;background:var(--pill-bg);border:1px solid var(--card-border);border-radius:12px;padding:12px;color:var(--text-1);font-family:inherit;font-size:0.9rem;min-width:120px;">
+          <input type="number" id="userAge" placeholder="سن" style="flex:0 0 80px;background:var(--pill-bg);border:1px solid var(--card-border);border-radius:12px;padding:12px;color:var(--text-1);font-family:inherit;font-size:0.9rem;">
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn grad-teal" id="saveProfileBtn" style="flex:1;"><span id="saveProfileText">💾 ذخیره پروفایل</span></button>
+          <button class="btn grad-amber" id="resetDataBtn" style="flex:1;"><span id="resetDataText">🔄 بازنشانی داده‌ها</span></button>
+        </div>
+        <div style="margin-top:6px;font-size:0.8rem;color:var(--text-3);text-align:center;" id="profileStatus">همه تنظیمات به‌صورت خودکار در مرورگر ذخیره می‌شوند</div>
+      </div>
+    </section>
+  </div>
+
+  <footer id="footerText">طراحی‌شده برای همراهی آرام‌تر با گوشی شما</footer>
+</div>
+
+<div class="save-indicator" id="saveIndicator">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+  <span id="saveMsg">ذخیره شد ✅</span>
+</div>
+
+<script>
+  const LANG = {
+    fa: {
+      brandTitle: "تحلیلگر سلامت دیجیتال",
+      brandSub: "نگاهی آرام به تعادل بین کار، سرگرمی و استراحت شما",
+      balanceTitle: "امتیاز تعادل",
+      balanceLabel: "تعادل امروز",
+      suggestTitle: "پیشنهادهای هوشمند",
+      alertTitle: "هشدار اسکرول بی‌هدف",
+      notifyBtn: "فعال‌سازی یادآور مرورگر",
+      predictTitle: "پیش‌بینی آینده",
+      workLabel: "کار",
+      funLabel: "سرگرمی",
+      restLabel: "استراحت",
+      appTitle: "مصرف اپلیکیشن‌ها",
+      goalTitle: "هدف‌گذاری روزانه",
+      goalUnit: "ساعت کار مفید",
+      goalSetBtn: "ثبت",
+      reportTitle: "گزارش هفتگی",
+      reportDesc: "گزارش کامل رفتارهای دیجیتال خود را به صورت تصویر دریافت کنید و با دیگران به اشتراک بگذارید",
+      downloadBtn: "دانلود گزارش",
+      sleepTitle: "خواب و ریتم شبانه‌روزی",
+      sleepLabel: "⏰ زمان خواب",
+      wakeLabel: "☀️ زمان بیداری",
+      saveSleepText: "💾 ذخیره تنظیمات خواب",
+      durationLabel: "⏱️ مدت خواب",
+      qualityLabel: "🌟 کیفیت خواب",
+      bestTimeLabel: "💡 بهترین زمان خواب",
+      cycleLabel: "🔄 سیکل‌های کامل",
+      profileTitle: "پروفایل و تنظیمات",
+      saveProfileText: "💾 ذخیره پروفایل",
+      resetDataText: "🔄 بازنشانی داده‌ها",
+      profileStatus: "همه تنظیمات به‌صورت خودکار در مرورگر ذخیره می‌شوند",
+      footerText: "طراحی‌شده برای همراهی آرام‌تر با گوشی شما",
+      saveMsg: "ذخیره شد ✅",
+      themeNight: "حالت شب",
+      themeDay: "حالت روز",
+      focusMode: "حالت تمرکز",
+      focusExit: "خروج از تمرکز",
+      qualityGood: "عالی",
+      qualityOk: "خوب",
+      qualityWarn: "متوسط",
+      qualityDanger: "کم",
+      alertDesc: (m) => m + " دقیقه اسکرول بدون هدف مشخص ثبت شده است",
+      predictionText: (h) => "اگر این روند ادامه یابد، فردا حدود " + h + " ساعت درگیر شبکه‌های اجتماعی خواهی بود",
+      goalText: (p,c,t) => p + "٪ پیشرفت — " + c + " از " + t + " ساعت هدف",
+      motivation: {
+        high: "روند خوبی داری؛ کمی استراحت آگاهانه بیشتر، روزت را کامل می‌کند 🌿",
+        mid: "در مسیر خوبی هستی؛ کمی زمان بیشتر به استراحت اختصاص بده 🌤️",
+        low: "امروز کمی سنگین بوده؛ یک استراحت کوتاه همین حالا فرق زیادی ایجاد می‌کند 💛"
+      },
+      sleepQualityMap: {good: "عالی", ok: "خوب", warn: "متوسط", danger: "کم"},
+      notifyBody: (m) => m + " — لطفاً کمی استراحت کن."
+    },
+    en: {
+      brandTitle: "Digital Wellness Analyzer",
+      brandSub: "A calm look at the balance between work, fun and rest",
+      balanceTitle: "Balance Score",
+      balanceLabel: "Today's Balance",
+      suggestTitle: "Smart Suggestions",
+      alertTitle: "Mindless Scroll Alert",
+      notifyBtn: "Enable Browser Reminder",
+      predictTitle: "Future Prediction",
+      workLabel: "Work",
+      funLabel: "Fun",
+      restLabel: "Rest",
+      appTitle: "App Usage",
+      goalTitle: "Daily Goal Setting",
+      goalUnit: "hours of productive work",
+      goalSetBtn: "Set",
+      reportTitle: "Weekly Report",
+      reportDesc: "Get a full report of your digital behavior as an image and share it with others",
+      downloadBtn: "Download Report",
+      sleepTitle: "Sleep & Circadian Rhythm",
+      sleepLabel: "⏰ Bedtime",
+      wakeLabel: "☀️ Wake Time",
+      saveSleepText: "💾 Save Sleep Settings",
+      durationLabel: "⏱️ Sleep Duration",
+      qualityLabel: "🌟 Sleep Quality",
+      bestTimeLabel: "💡 Best Sleep Time",
+      cycleLabel: "🔄 Full Cycles",
+      profileTitle: "Profile & Settings",
+      saveProfileText: "💾 Save Profile",
+      resetDataText: "🔄 Reset Data",
+      profileStatus: "All settings are automatically saved in your browser",
+      footerText: "Designed for a calmer time with your phone",
+      saveMsg: "Saved ✅",
+      themeNight: "Night Mode",
+      themeDay: "Day Mode",
+      focusMode: "Focus Mode",
+      focusExit: "Exit Focus",
+      qualityGood: "Excellent",
+      qualityOk: "Good",
+      qualityWarn: "Moderate",
+      qualityDanger: "Low",
+      alertDesc: (m) => m + " minutes of aimless scrolling recorded",
+      predictionText: (h) => "If this trend continues, you'll spend about " + h + " hours on social media tomorrow",
+      goalText: (p,c,t) => p + "% progress — " + c + " of " + t + " hours goal",
+      motivation: {
+        high: "You're doing great; a little mindful rest will make your day perfect 🌿",
+        mid: "You're on the right track; dedicate a bit more time to rest 🌤️",
+        low: "Today has been a bit heavy; a short break right now makes a big difference 💛"
+      },
+      sleepQualityMap: {good: "Excellent", ok: "Good", warn: "Moderate", danger: "Low"},
+      notifyBody: (m) => m + " — Please take a moment to rest."
+    },
+    es: {
+      brandTitle: "Analizador de Bienestar Digital",
+      brandSub: "Una mirada tranquila al equilibrio entre trabajo, diversión y descanso",
+      balanceTitle: "Puntuación de Equilibrio",
+      balanceLabel: "Equilibrio de Hoy",
+      suggestTitle: "Sugerencias Inteligentes",
+      alertTitle: "Alerta de Desplazamiento sin Sentido",
+      notifyBtn: "Activar Recordatorio del Navegador",
+      predictTitle: "Predicción Futura",
+      workLabel: "Trabajo",
+      funLabel: "Diversión",
+      restLabel: "Descanso",
+      appTitle: "Uso de Aplicaciones",
+      goalTitle: "Establecimiento de Metas Diarias",
+      goalUnit: "horas de trabajo productivo",
+      goalSetBtn: "Establecer",
+      reportTitle: "Informe Semanal",
+      reportDesc: "Obtén un informe completo de tu comportamiento digital como imagen y compártelo con otros",
+      downloadBtn: "Descargar Informe",
+      sleepTitle: "Sueño y Ritmo Circadiano",
+      sleepLabel: "⏰ Hora de Dormir",
+      wakeLabel: "☀️ Hora de Despertar",
+      saveSleepText: "💾 Guardar Configuración de Sueño",
+      durationLabel: "⏱️ Duración del Sueño",
+      qualityLabel: "🌟 Calidad del Sueño",
+      bestTimeLabel: "💡 Mejor Hora para Dormir",
+      cycleLabel: "🔄 Ciclos Completos",
+      profileTitle: "Perfil y Configuración",
+      saveProfileText: "💾 Guardar Perfil",
+      resetDataText: "🔄 Restablecer Datos",
+      profileStatus: "Toda la configuración se guarda automáticamente en tu navegador",
+      footerText: "Diseñado para un tiempo más tranquilo con tu teléfono",
+      saveMsg: "Guardado ✅",
+      themeNight: "Modo Nocturno",
+      themeDay: "Modo Diurno",
+      focusMode: "Modo Enfoque",
+      focusExit: "Salir del Enfoque",
+      qualityGood: "Excelente",
+      qualityOk: "Bueno",
+      qualityWarn: "Moderado",
+      qualityDanger: "Bajo",
+      alertDesc: (m) => m + " minutos de desplazamiento sin objetivo registrados",
+      predictionText: (h) => "Si esta tendencia continúa, pasarás unas " + h + " horas en redes sociales mañana",
+      goalText: (p,c,t) => p + "% de progreso — " + c + " de " + t + " horas objetivo",
+      motivation: {
+        high: "Lo estás haciendo muy bien; un poco de descanso consciente hará que tu día sea perfecto 🌿",
+        mid: "Vas por buen camino; dedica un poco más de tiempo al descanso 🌤️",
+        low: "Hoy ha sido un poco pesado; un breve descanso ahora mismo marca una gran diferencia 💛"
+      },
+      sleepQualityMap: {good: "Excelente", ok: "Bueno", warn: "Moderado", danger: "Bajo"},
+      notifyBody: (m) => m + " — Por favor, tómate un momento para descansar."
+    },
+    fr: {
+      brandTitle: "Analyseur de Bien-Être Numérique",
+      brandSub: "Un regard calme sur l'équilibre entre travail, divertissement et repos",
+      balanceTitle: "Score d'Équilibre",
+      balanceLabel: "Équilibre d'Aujourd'hui",
+      suggestTitle: "Suggestions Intelligentes",
+      alertTitle: "Alerte de Défilement Sans But",
+      notifyBtn: "Activer le Rappel du Navigateur",
+      predictTitle: "Prédiction Future",
+      workLabel: "Travail",
+      funLabel: "Divertissement",
+      restLabel: "Repos",
+      appTitle: "Utilisation des Applications",
+      goalTitle: "Objectif Quotidien",
+      goalUnit: "heures de travail productif",
+      goalSetBtn: "Définir",
+      reportTitle: "Rapport Hebdomadaire",
+      reportDesc: "Obtenez un rapport complet de votre comportement numérique sous forme d'image et partagez-le",
+      downloadBtn: "Télécharger le Rapport",
+      sleepTitle: "Sommeil et Rythme Circadien",
+      sleepLabel: "⏰ Heure du Coucher",
+      wakeLabel: "☀️ Heure du Réveil",
+      saveSleepText: "💾 Enregistrer les Paramètres de Sommeil",
+      durationLabel: "⏱️ Durée du Sommeil",
+      qualityLabel: "🌟 Qualité du Sommeil",
+      bestTimeLabel: "💡 Meilleure Heure pour Dormir",
+      cycleLabel: "🔄 Cycles Complets",
+      profileTitle: "Profil et Paramètres",
+      saveProfileText: "💾 Enregistrer le Profil",
+      resetDataText: "🔄 Réinitialiser les Données",
+      profileStatus: "Tous les paramètres sont automatiquement sauvegardés dans votre navigateur",
+      footerText: "Conçu pour un temps plus calme avec votre téléphone",
+      saveMsg: "Enregistré ✅",
+      themeNight: "Mode Nuit",
+      themeDay: "Mode Jour",
+      focusMode: "Mode Concentration",
+      focusExit: "Quitter la Concentration",
+      qualityGood: "Excellent",
+      qualityOk: "Bon",
+      qualityWarn: "Modéré",
+      qualityDanger: "Faible",
+      alertDesc: (m) => m + " minutes de défilement sans but enregistrées",
+      predictionText: (h) => "Si cette tendance continue, vous passerez environ " + h + " heures sur les réseaux sociaux demain",
+      goalText: (p,c,t) => p + "% de progrès — " + c + " sur " + t + " heures d'objectif",
+      motivation: {
+        high: "Tu te débrouilles très bien ; un peu de repos conscient rendra ta journée parfaite 🌿",
+        mid: "Tu es sur la bonne voie ; accorde un peu plus de temps au repos 🌤️",
+        low: "La journée a été un peu lourde ; une courte pause maintenant fait une grande différence 💛"
+      },
+      sleepQualityMap: {good: "Excellent", ok: "Bon", warn: "Modéré", danger: "Faible"},
+      notifyBody: (m) => m + " — Prends un moment pour te reposer."
+    },
+    de: {
+      brandTitle: "Digitaler Wellness-Analyzer",
+      brandSub: "Ein ruhiger Blick auf die Balance zwischen Arbeit, Spaß und Erholung",
+      balanceTitle: "Balance-Score",
+      balanceLabel: "Heutige Balance",
+      suggestTitle: "Intelligente Vorschläge",
+      alertTitle: "Achtung - Zielloses Scrollen",
+      notifyBtn: "Browser-Erinnerung aktivieren",
+      predictTitle: "Zukunftsprognose",
+      workLabel: "Arbeit",
+      funLabel: "Spaß",
+      restLabel: "Erholung",
+      appTitle: "App-Nutzung",
+      goalTitle: "Tägliche Zielsetzung",
+      goalUnit: "Stunden produktiver Arbeit",
+      goalSetBtn: "Setzen",
+      reportTitle: "Wochenbericht",
+      reportDesc: "Erhalte einen vollständigen Bericht deines digitalen Verhaltens als Bild und teile ihn",
+      downloadBtn: "Bericht herunterladen",
+      sleepTitle: "Schlaf & zirkadianer Rhythmus",
+      sleepLabel: "⏰ Schlafenszeit",
+      wakeLabel: "☀️ Aufwachzeit",
+      saveSleepText: "💾 Schlafeinstellungen speichern",
+      durationLabel: "⏱️ Schlafdauer",
+      qualityLabel: "🌟 Schlafqualität",
+      bestTimeLabel: "💡 Beste Schlafenszeit",
+      cycleLabel: "🔄 Volle Zyklen",
+      profileTitle: "Profil & Einstellungen",
+      saveProfileText: "💾 Profil speichern",
+      resetDataText: "🔄 Daten zurücksetzen",
+      profileStatus: "Alle Einstellungen werden automatisch in deinem Browser gespeichert",
+      footerText: "Entworfen für eine ruhigere Zeit mit deinem Telefon",
+      saveMsg: "Gespeichert ✅",
+      themeNight: "Nachtmodus",
+      themeDay: "Tagmodus",
+      focusMode: "Fokusmodus",
+      focusExit: "Fokus verlassen",
+      qualityGood: "Ausgezeichnet",
+      qualityOk: "Gut",
+      qualityWarn: "Mäßig",
+      qualityDanger: "Niedrig",
+      alertDesc: (m) => m + " Minuten zielloses Scrollen aufgezeichnet",
+      predictionText: (h) => "Wenn dieser Trend anhält, wirst du morgen etwa " + h + " Stunden in sozialen Medien verbringen",
+      goalText: (p,c,t) => p + "% Fortschritt — " + c + " von " + t + " Stunden Ziel",
+      motivation: {
+        high: "Du machst das großartig; ein wenig bewusste Erholung macht deinen Tag perfekt 🌿",
+        mid: "Du bist auf dem richtigen Weg; widme etwas mehr Zeit der Erholung 🌤️",
+        low: "Heute war etwas schwer; eine kurze Pause jetzt macht einen großen Unterschied 💛"
+      },
+      sleepQualityMap: {good: "Ausgezeichnet", ok: "Gut", warn: "Mäßig", danger: "Niedrig"},
+      notifyBody: (m) => m + " — Bitte nimm dir einen Moment zum Ausruhen."
+    },
+    it: {
+      brandTitle: "Analizzatore di Benessere Digitale",
+      brandSub: "Uno sguardo calmo all'equilibrio tra lavoro, divertimento e riposo",
+      balanceTitle: "Punteggio Equilibrio",
+      balanceLabel: "Equilibrio di Oggi",
+      suggestTitle: "Suggerimenti Intelligenti",
+      alertTitle: "Allarme Scrolling Senza Scopo",
+      notifyBtn: "Attiva Promemoria del Browser",
+      predictTitle: "Previsione Futura",
+      workLabel: "Lavoro",
+      funLabel: "Divertimento",
+      restLabel: "Riposo",
+      appTitle: "Utilizzo App",
+      goalTitle: "Obiettivo Giornaliero",
+      goalUnit: "ore di lavoro produttivo",
+      goalSetBtn: "Imposta",
+      reportTitle: "Rapporto Settimanale",
+      reportDesc: "Ottieni un rapporto completo del tuo comportamento digitale come immagine e condividilo",
+      downloadBtn: "Scarica Rapporto",
+      sleepTitle: "Sonno e Ritmo Circadiano",
+      sleepLabel: "⏰ Ora di Dormire",
+      wakeLabel: "☀️ Ora di Sveglia",
+      saveSleepText: "💾 Salva Impostazioni Sonno",
+      durationLabel: "⏱️ Durata del Sonno",
+      qualityLabel: "🌟 Qualità del Sonno",
+      bestTimeLabel: "💡 Miglior Ora per Dormire",
+      cycleLabel: "🔄 Cicli Completi",
+      profileTitle: "Profilo e Impostazioni",
+      saveProfileText: "💾 Salva Profilo",
+      resetDataText: "🔄 Reimposta Dati",
+      profileStatus: "Tutte le impostazioni vengono salvate automaticamente nel tuo browser",
+      footerText: "Progettato per un tempo più tranquillo con il tuo telefono",
+      saveMsg: "Salvato ✅",
+      themeNight: "Modalità Notturna",
+      themeDay: "Modalità Giorno",
+      focusMode: "Modalità Focus",
+      focusExit: "Esci dal Focus",
+      qualityGood: "Eccellente",
+      qualityOk: "Buono",
+      qualityWarn: "Moderato",
+      qualityDanger: "Basso",
+      alertDesc: (m) => m + " minuti di scrolling senza scopo registrati",
+      predictionText: (h) => "Se questa tendenza continua, trascorrerai circa " + h + " ore sui social media domani",
+      goalText: (p,c,t) => p + "% di progresso — " + c + " di " + t + " ore obiettivo",
+      motivation: {
+        high: "Stai andando alla grande; un po' di riposo consapevole renderà la tua giornata perfetta 🌿",
+        mid: "Sei sulla strada giusta; dedica un po' più tempo al riposo 🌤️",
+        low: "Oggi è stato un po' pesante; una breve pausa ora fa una grande differenza 💛"
+      },
+      sleepQualityMap: {good: "Eccellente", ok: "Buono", warn: "Moderato", danger: "Basso"},
+      notifyBody: (m) => m + " — Per favore, prenditi un momento per riposare."
+    },
+    pt: {
+      brandTitle: "Analisador de Bem-Estar Digital",
+      brandSub: "Um olhar calmo sobre o equilíbrio entre trabalho, diversão e descanso",
+      balanceTitle: "Pontuação de Equilíbrio",
+      balanceLabel: "Equilíbrio de Hoje",
+      suggestTitle: "Sugestões Inteligentes",
+      alertTitle: "Alerta de Rolagem Sem Objetivo",
+      notifyBtn: "Ativar Lembrete do Navegador",
+      predictTitle: "Previsão Futura",
+      workLabel: "Trabalho",
+      funLabel: "Diversão",
+      restLabel: "Descanso",
+      appTitle: "Uso de Aplicativos",
+      goalTitle: "Definição de Meta Diária",
+      goalUnit: "horas de trabalho produtivo",
+      goalSetBtn: "Definir",
+      reportTitle: "Relatório Semanal",
+      reportDesc: "Obtenha um relatório completo do seu comportamento digital como imagem e compartilhe",
+      downloadBtn: "Baixar Relatório",
+      sleepTitle: "Sono e Ritmo Circadiano",
+      sleepLabel: "⏰ Hora de Dormir",
+      wakeLabel: "☀️ Hora de Acordar",
+      saveSleepText: "💾 Salvar Configurações de Sono",
+      durationLabel: "⏱️ Duração do Sono",
+      qualityLabel: "🌟 Qualidade do Sono",
+      bestTimeLabel: "💡 Melhor Hora para Dormir",
+      cycleLabel: "🔄 Ciclos Completos",
+      profileTitle: "Perfil e Configurações",
+      saveProfileText: "💾 Salvar Perfil",
+      resetDataText: "🔄 Redefinir Dados",
+      profileStatus: "Todas as configurações são salvas automaticamente no seu navegador",
+      footerText: "Projetado para um tempo mais calmo com seu telefone",
+      saveMsg: "Salvo ✅",
+      themeNight: "Modo Noturno",
+      themeDay: "Modo Diurno",
+      focusMode: "Modo Foco",
+      focusExit: "Sair do Foco",
+      qualityGood: "Excelente",
+      qualityOk: "Bom",
+      qualityWarn: "Moderado",
+      qualityDanger: "Baixo",
+      alertDesc: (m) => m + " minutos de rolagem sem objetivo registrados",
+      predictionText: (h) => "Se essa tendência continuar, você passará cerca de " + h + " horas em redes sociais amanhã",
+      goalText: (p,c,t) => p + "% de progresso — " + c + " de " + t + " horas meta",
+      motivation: {
+        high: "Você está indo muito bem; um pouco de descanso consciente tornará seu dia perfeito 🌿",
+        mid: "Você está no caminho certo; dedique um pouco mais de tempo ao descanso 🌤️",
+        low: "Hoje foi um pouco pesado; uma pausa curta agora faz uma grande diferença 💛"
+      },
+      sleepQualityMap: {good: "Excelente", ok: "Bom", warn: "Moderado", danger: "Baixo"},
+      notifyBody: (m) => m + " — Por favor, tire um momento para descansar."
+    },
+    ru: {
+      brandTitle: "Анализатор цифрового благополучия",
+      brandSub: "Спокойный взгляд на баланс между работой, развлечениями и отдыхом",
+      balanceTitle: "Показатель баланса",
+      balanceLabel: "Баланс сегодня",
+      suggestTitle: "Умные предложения",
+      alertTitle: "Предупреждение о бесцельном скроллинге",
+      notifyBtn: "Включить напоминание в браузере",
+      predictTitle: "Прогноз на будущее",
+      workLabel: "Работа",
+      funLabel: "Развлечения",
+      restLabel: "Отдых",
+      appTitle: "Использование приложений",
+      goalTitle: "Ежедневное целеполагание",
+      goalUnit: "часов продуктивной работы",
+      goalSetBtn: "Установить",
+      reportTitle: "Еженедельный отчёт",
+      reportDesc: "Получите полный отчёт о вашем цифровом поведении в виде изображения и поделитесь им",
+      downloadBtn: "Скачать отчёт",
+      sleepTitle: "Сон и циркадный ритм",
+      sleepLabel: "⏰ Время сна",
+      wakeLabel: "☀️ Время пробуждения",
+      saveSleepText: "💾 Сохранить настройки сна",
+      durationLabel: "⏱️ Продолжительность сна",
+      qualityLabel: "🌟 Качество сна",
+      bestTimeLabel: "💡 Лучшее время для сна",
+      cycleLabel: "🔄 Полные циклы",
+      profileTitle: "Профиль и настройки",
+      saveProfileText: "💾 Сохранить профиль",
+      resetDataText: "🔄 Сбросить данные",
+      profileStatus: "Все настройки автоматически сохраняются в вашем браузере",
+      footerText: "Разработано для более спокойного общения с телефоном",
+      saveMsg: "Сохранено ✅",
+      themeNight: "Ночной режим",
+      themeDay: "Дневной режим",
+      focusMode: "Режим фокуса",
+      focusExit: "Выйти из фокуса",
+      qualityGood: "Отлично",
+      qualityOk: "Хорошо",
+      qualityWarn: "Средне",
+      qualityDanger: "Низко",
+      alertDesc: (m) => m + " минут бесцельного скроллинга зафиксировано",
+      predictionText: (h) => "Если эта тенденция продолжится, завтра вы проведёте около " + h + " часов в социальных сетях",
+      goalText: (p,c,t) => p + "% прогресса — " + c + " из " + t + " часов цели",
+      motivation: {
+        high: "У тебя отлично получается; немного осознанного отдыха сделает твой день идеальным 🌿",
+        mid: "Ты на верном пути; удели немного больше времени отдыху 🌤️",
+        low: "Сегодня было немного тяжело; короткий перерыв сейчас имеет большое значение 💛"
+      },
+      sleepQualityMap: {good: "Отлично", ok: "Хорошо", warn: "Средне", danger: "Низко"},
+      notifyBody: (m) => m + " — Пожалуйста, отдохни немного."
+    },
+    ja: {
+      brandTitle: "デジタルウェルネスアナライザー",
+      brandSub: "仕事、楽しみ、休息のバランスを穏やかに見つめる",
+      balanceTitle: "バランススコア",
+      balanceLabel: "今日のバランス",
+      suggestTitle: "スマートな提案",
+      alertTitle: "目的のないスクロール警告",
+      notifyBtn: "ブラウザリマインダーを有効にする",
+      predictTitle: "将来予測",
+      workLabel: "仕事",
+      funLabel: "楽しみ",
+      restLabel: "休息",
+      appTitle: "アプリ使用状況",
+      goalTitle: "日次目標設定",
+      goalUnit: "時間の生産的作業",
+      goalSetBtn: "設定",
+      reportTitle: "週次レポート",
+      reportDesc: "デジタル行動の完全なレポートを画像として取得し、共有する",
+      downloadBtn: "レポートをダウンロード",
+      sleepTitle: "睡眠と概日リズム",
+      sleepLabel: "⏰ 就寝時間",
+      wakeLabel: "☀️ 起床時間",
+      saveSleepText: "💾 睡眠設定を保存",
+      durationLabel: "⏱️ 睡眠時間",
+      qualityLabel: "🌟 睡眠の質",
+      bestTimeLabel: "💡 最適な就寝時間",
+      cycleLabel: "🔄 完全なサイクル",
+      profileTitle: "プロフィールと設定",
+      saveProfileText: "💾 プロフィールを保存",
+      resetDataText: "🔄 データをリセット",
+      profileStatus: "すべての設定はブラウザに自動保存されます",
+      footerText: "携帯電話とより穏やかな時間を過ごすためにデザインされました",
+      saveMsg: "保存されました ✅",
+      themeNight: "ナイトモード",
+      themeDay: "デイモード",
+      focusMode: "集中モード",
+      focusExit: "集中を解除",
+      qualityGood: "優れています",
+      qualityOk: "良い",
+      qualityWarn: "普通",
+      qualityDanger: "低い",
+      alertDesc: (m) => m + "分の目的のないスクロールが記録されました",
+      predictionText: (h) => "この傾向が続くと、明日は約" + h + "時間をソーシャルメディアに費やすでしょう",
+      goalText: (p,c,t) => p + "% 進捗 — " + c + " / " + t + " 時間目標",
+      motivation: {
+        high: "素晴らしい調子です。少し意識的な休息で一日が完璧になります 🌿",
+        mid: "順調です。休息にもう少し時間を割いてみてください 🌤️",
+        low: "今日は少し重かったですね。今すぐ短い休憩を取ることが大きな違いを生みます 💛"
+      },
+      sleepQualityMap: {good: "優れています", ok: "良い", warn: "普通", danger: "低い"},
+      notifyBody: (m) => m + " — 少し休憩してください。"
+    },
+    zh: {
+      brandTitle: "数字健康分析器",
+      brandSub: "平静地看待工作、娱乐和休息之间的平衡",
+      balanceTitle: "平衡分数",
+      balanceLabel: "今日的平衡",
+      suggestTitle: "智能建议",
+      alertTitle: "无目的滚动警报",
+      notifyBtn: "启用浏览器提醒",
+      predictTitle: "未来预测",
+      workLabel: "工作",
+      funLabel: "娱乐",
+      restLabel: "休息",
+      appTitle: "应用使用情况",
+      goalTitle: "每日目标设定",
+      goalUnit: "小时有效工作时间",
+      goalSetBtn: "设定",
+      reportTitle: "每周报告",
+      reportDesc: "将您的数字行为完整报告以图像形式获取并分享",
+      downloadBtn: "下载报告",
+      sleepTitle: "睡眠与昼夜节律",
+      sleepLabel: "⏰ 就寝时间",
+      wakeLabel: "☀️ 起床时间",
+      saveSleepText: "💾 保存睡眠设置",
+      durationLabel: "⏱️ 睡眠时长",
+      qualityLabel: "🌟 睡眠质量",
+      bestTimeLabel: "💡 最佳就寝时间",
+      cycleLabel: "🔄 完整周期",
+      profileTitle: "个人资料与设置",
+      saveProfileText: "💾 保存个人资料",
+      resetDataText: "🔄 重置数据",
+      profileStatus: "所有设置会自动保存在您的浏览器中",
+      footerText: "专为与手机更平静地相处而设计",
+      saveMsg: "已保存 ✅",
+      themeNight: "夜间模式",
+      themeDay: "日间模式",
+      focusMode: "专注模式",
+      focusExit: "退出专注",
+      qualityGood: "优秀",
+      qualityOk: "良好",
+      qualityWarn: "中等",
+      qualityDanger: "低",
+      alertDesc: (m) => "记录了" + m + "分钟无目的滚动",
+      predictionText: (h) => "如果这种趋势持续下去，明天您将在社交媒体上花费约" + h + "小时",
+      goalText: (p,c,t) => p + "% 进度 — " + c + " / " + t + " 小时目标",
+      motivation: {
+        high: "你做得很好；一点点有意识的休息会让你的日子更完美 🌿",
+        mid: "你在正确的轨道上；多花点时间休息 🌤️",
+        low: "今天有点沉重；现在就短暂休息一下会有很大帮助 💛"
+      },
+      sleepQualityMap: {good: "优秀", ok: "良好", warn: "中等", danger: "低"},
+      notifyBody: (m) => m + " — 请休息一下。"
+    },
+    ar: {
+      brandTitle: "محلل الصحة الرقمية",
+      brandSub: "نظرة هادئة على التوازن بين العمل والترفيه والراحة",
+      balanceTitle: "درجة التوازن",
+      balanceLabel: "توازن اليوم",
+      suggestTitle: "اقتراحات ذكية",
+      alertTitle: "تنبيه التمرير بلا هدف",
+      notifyBtn: "تفعيل تذكير المتصفح",
+      predictTitle: "توقع المستقبل",
+      workLabel: "عمل",
+      funLabel: "ترفيه",
+      restLabel: "راحة",
+      appTitle: "استخدام التطبيقات",
+      goalTitle: "تحديد الأهداف اليومية",
+      goalUnit: "ساعات العمل المنتج",
+      goalSetBtn: "تعيين",
+      reportTitle: "تقرير أسبوعي",
+      reportDesc: "احصل على تقرير كامل عن سلوكك الرقمي كصورة وشاركه مع الآخرين",
+      downloadBtn: "تنزيل التقرير",
+      sleepTitle: "النوم والإيقاع اليومي",
+      sleepLabel: "⏰ وقت النوم",
+      wakeLabel: "☀️ وقت الاستيقاظ",
+      saveSleepText: "💾 حفظ إعدادات النوم",
+      durationLabel: "⏱️ مدة النوم",
+      qualityLabel: "🌟 جودة النوم",
+      bestTimeLabel: "💡 أفضل وقت للنوم",
+      cycleLabel: "🔄 دورات كاملة",
+      profileTitle: "الملف الشخصي والإعدادات",
+      saveProfileText: "💾 حفظ الملف الشخصي",
+      resetDataText: "🔄 إعادة تعيين البيانات",
+      profileStatus: "يتم حفظ جميع الإعدادات تلقائياً في متصفحك",
+      footerText: "مصمم لقضاء وقت أكثر هدوءاً مع هاتفك",
+      saveMsg: "تم الحفظ ✅",
+      themeNight: "الوضع الليلي",
+      themeDay: "الوضع النهاري",
+      focusMode: "وضع التركيز",
+      focusExit: "الخروج من التركيز",
+      qualityGood: "ممتاز",
+      qualityOk: "جيد",
+      qualityWarn: "متوسط",
+      qualityDanger: "منخفض",
+      alertDesc: (m) => "تم تسجيل " + m + " دقيقة من التمرير بلا هدف",
+      predictionText: (h) => "إذا استمر هذا الاتجاه، ستقضي حوالي " + h + " ساعة على وسائل التواصل الاجتماعي غداً",
+      goalText: (p,c,t) => p + "% تقدم — " + c + " من " + t + " ساعات الهدف",
+      motivation: {
+        high: "أنت تقوم بعمل رائع؛ قليل من الراحة الواعية سيجعل يومك مثالياً 🌿",
+        mid: "أنت على الطريق الصحيح؛ خصص المزيد من الوقت للراحة 🌤️",
+        low: "كان اليوم ثقيلاً بعض الشيء؛ استراحة قصيرة الآن تحدث فرقاً كبيراً 💛"
+      },
+      sleepQualityMap: {good: "ممتاز", ok: "جيد", warn: "متوسط", danger: "منخفض"},
+      notifyBody: (m) => m + " — من فضلك خذ لحظة للراحة."
+    }
+  };
+
+  const STORAGE_KEY = 'wellness_data_v2';
+  let currentLang = 'fa';
+  let userData = {};
+
+  function loadStoredData() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        userData = JSON.parse(stored);
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  function saveToStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+      showSaveIndicator();
+    } catch(e) {}
+  }
+
+  function showSaveIndicator() {
+    const el = document.getElementById('saveIndicator');
+    el.classList.add('show');
+    clearTimeout(el._timeout);
+    el._timeout = setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  function getLang() {
+    const stored = localStorage.getItem('wellness_lang');
+    if (stored && LANG[stored]) return stored;
+    return 'fa';
+  }
+
+  function setLang(lang) {
+    if (LANG[lang]) {
+      currentLang = lang;
+      localStorage.setItem('wellness_lang', lang);
+      document.body.setAttribute('data-lang', lang);
+      document.getElementById('langSelect').value = lang;
+      applyLanguage();
+    }
+  }
+
+  function applyLanguage() {
+    const t = LANG[currentLang] || LANG.fa;
+    document.getElementById('brandTitle').textContent = t.brandTitle;
+    document.getElementById('brandSub').textContent = t.brandSub;
+    document.getElementById('balanceTitle').textContent = t.balanceTitle;
+    document.getElementById('balanceLabel').textContent = t.balanceLabel;
+    document.getElementById('suggestTitle').textContent = t.suggestTitle;
+    document.getElementById('alertTitle').textContent = t.alertTitle;
+    document.getElementById('notifyBtnText').textContent = t.notifyBtn;
+    document.getElementById('predictTitle').textContent = t.predictTitle;
+    document.getElementById('workLabel').textContent = t.workLabel;
+    document.getElementById('funLabel').textContent = t.funLabel;
+    document.getElementById('restLabel').textContent = t.restLabel;
+    document.getElementById('appTitle').textContent = t.appTitle;
+    document.getElementById('goalTitle').textContent = t.goalTitle;
+    document.getElementById('goalUnit').textContent = t.goalUnit;
+    document.getElementById('goalSetBtnText').textContent = t.goalSetBtn;
+    document.getElementById('reportTitle').textContent = t.reportTitle;
+    document.getElementById('reportDesc').textContent = t.reportDesc;
+    document.getElementById('downloadBtnText').textContent = t.downloadBtn;
+    document.getElementById('sleepTitle').textContent = t.sleepTitle;
+    document.getElementById('sleepLabel').textContent = t.sleepLabel;
+    document.getElementById('wakeLabel').textContent = t.wakeLabel;
+    document.getElementById('saveSleepText').textContent = t.saveSleepText;
+    document.getElementById('durationLabel').textContent = t.durationLabel;
+    document.getElementById('qualityLabel').textContent = t.qualityLabel;
+    document.getElementById('bestTimeLabel').textContent = t.bestTimeLabel;
+    document.getElementById('cycleLabel').textContent = t.cycleLabel;
+    document.getElementById('profileTitle').textContent = t.profileTitle;
+    document.getElementById('saveProfileText').textContent = t.saveProfileText;
+    document.getElementById('resetDataText').textContent = t.resetDataText;
+    document.getElementById('profileStatus').textContent = t.profileStatus;
+    document.getElementById('footerText').textContent = t.footerText;
+    document.getElementById('saveMsg').textContent = t.saveMsg;
+    const themeBtn = document.getElementById('themeToggle');
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    themeBtn.innerHTML = isDark
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg><span>' + t.themeDay + '</span>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><span>' + t.themeNight + '</span>';
+    const focusBtn = document.getElementById('focusToggle');
+    const isFocus = document.body.classList.contains('focus-mode');
+    focusBtn.innerHTML = isFocus
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle></svg><span>' + t.focusExit + '</span>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg><span>' + t.focusMode + '</span>';
+    updateDynamicTexts();
+  }
+
+  function updateDynamicTexts() {
+    const t = LANG[currentLang] || LANG.fa;
+    const balanceNum = parseInt(document.getElementById('balanceNum').textContent) || 0;
+    const score = balanceNum;
+    const mot = document.getElementById('motivationBox');
+    if (mot) {
+      if (score >= 70) mot.textContent = t.motivation.high;
+      else if (score >= 40) mot.textContent = t.motivation.mid;
+      else mot.textContent = t.motivation.low;
+    }
+    const alertSpan = document.getElementById('alertDesc');
+    const minutesMatch = alertSpan.textContent.match(/(\d+)/);
+    if (minutesMatch) {
+      const m = parseInt(minutesMatch[0]);
+      alertSpan.textContent = t.alertDesc(m);
+    }
+    const pred = document.getElementById('predictionText');
+    const hoursMatch = pred.textContent.match(/(\d+)/);
+    if (hoursMatch) {
+      const h = parseInt(hoursMatch[0]);
+      pred.textContent = t.predictionText(h);
+    }
+    const goalText = document.getElementById('goalText');
+    const parts = goalText.textContent.match(/(\d+)%.*?(\d+\.?\d*).*?(\d+\.?\d*)/);
+    if (parts) {
+      const p = parseInt(parts[1]);
+      const c = parseFloat(parts[2]);
+      const g = parseFloat(parts[3]);
+      goalText.innerHTML = t.goalText(p, c, g);
+    }
+    const qualityEl = document.getElementById('sleepQuality');
+    const qText = qualityEl.textContent;
+    for (const [key, val] of Object.entries(t.sleepQualityMap)) {
+      if (qText.includes(val) || qText.includes(LANG.fa.sleepQualityMap[key]) || qText.includes(LANG.en.sleepQualityMap[key])) {
+        qualityEl.textContent = val;
+        break;
+      }
+    }
+  }
+
+  function toPersianDigits(n){
+    const map = {"0":"۰","1":"۱","2":"۲","3":"۳","4":"۴","5":"۵","6":"۶","7":"۷","8":"۸","9":"۹"};
+    return String(n).replace(/[0-9]/g, d => map[d]);
+  }
+
+  function fmtHours(h, lang){
+    if (lang === 'fa') return toPersianDigits(h) + " ساعت";
+    return h + "h";
+  }
+
+  function randomDemoData(){
+    const work = +(3 + Math.random()*4).toFixed(1);
+    const fun = +(1 + Math.random()*4).toFixed(1);
+    const rest = +(1 + Math.random()*3).toFixed(1);
+    const total = work+fun+rest;
+    const score = Math.max(30, Math.min(96, Math.round(100 - (fun/total)*70 + (rest/total)*25)));
+    return {
+      balance_score: score,
+      usage:{work_hours:work, fun_hours:fun, rest_hours:rest},
+      alert:{minutes: Math.round(15+Math.random()*40)},
+      suggestions:[
+        {icon:"💡", text:"هر ۵۰ دقیقه کار، ۱۰ دقیقه استراحت کامل از صفحه داشته باش"},
+        {icon:"📵", text:"زمان استفاده از شبکه‌های اجتماعی را به ۳۰ دقیقه در هر نوبت محدود کن"},
+        {icon:"🌙", text:"یک ساعت قبل از خواب، حالت مزاحم نشوید را فعال کن"}
+      ],
+      apps:[
+        {name:"اینستاگرام", icon:"📸", hours:+(0.5+Math.random()*2).toFixed(1), color:"pink"},
+        {name:"پیام‌رسان", icon:"💬", hours:+(0.5+Math.random()*1.5).toFixed(1), color:"blue"},
+        {name:"پخش ویدیو", icon:"▶️", hours:+(0.3+Math.random()*1.2).toFixed(1), color:"purple"},
+        {name:"بازی", icon:"🎮", hours:+(0.1+Math.random()*0.8).toFixed(1), color:"amber"}
+      ],
+      goal:{target_hours:2, current_hours:+(0.5+Math.random()*1.8).toFixed(1)},
+      prediction:{text:"اگر این روند ادامه یابد، فردا حدود " + toPersianDigits(Math.round(2+Math.random()*3)) + " ساعت درگیر شبکه‌های اجتماعی خواهی بود"}
+    };
+  }
+
+  const COLOR_MAP = {
+    pink:{bar:"var(--accent-pink)", tint:"rgba(247,49,140,0.16)"},
+    blue:{bar:"var(--accent-blue)", tint:"rgba(79,110,247,0.16)"},
+    purple:{bar:"var(--accent-purple)", tint:"rgba(155,93,229,0.16)"},
+    amber:{bar:"var(--accent-amber)", tint:"rgba(255,182,39,0.18)"},
+    teal:{bar:"var(--accent-teal)", tint:"rgba(18,198,176,0.16)"}
+  };
+
+  let goalTarget = 2;
+  let goalCurrent = 1.2;
+
+  function renderDonut(score){
+    const CIRC = 2*Math.PI*80;
+    const donut = document.getElementById("donutValue");
+    const balanceNum = document.getElementById("balanceNum");
+    donut.style.strokeDashoffset = CIRC - (Math.max(0,Math.min(100,score))/100)*CIRC;
+    let cur = 0;
+    const step = () => {
+      cur += Math.max(1, Math.round(score/40));
+      if(cur < score){
+        balanceNum.textContent = (currentLang === 'fa' ? toPersianDigits(cur) : cur) + "%";
+        requestAnimationFrame(() => setTimeout(step, 14));
+      }else{
+        balanceNum.textContent = (currentLang === 'fa' ? toPersianDigits(score) : score) + "%";
+      }
+    };
+    step();
+    const t = LANG[currentLang] || LANG.fa;
+    const motivationBox = document.getElementById("motivationBox");
+    motivationBox.textContent = score >= 70 ? t.motivation.high : score >= 40 ? t.motivation.mid : t.motivation.low;
+  }
+
+  function renderAlertAndSuggestions(data){
+    const t = LANG[currentLang] || LANG.fa;
+    document.getElementById("alertDesc").textContent = t.alertDesc(data.alert.minutes);
+    const list = document.getElementById("suggestList");
+    list.innerHTML = "";
+    data.suggestions.forEach(s => {
+      const li = document.createElement("li");
+      li.innerHTML = '<span class="s-emoji"></span><span></span>';
+      li.querySelector(".s-emoji").textContent = s.icon || "💡";
+      li.querySelector("span:last-child").textContent = s.text;
+      list.appendChild(li);
+    });
+  }
+
+  function renderBars(data){
+    const u = data.usage;
+    const maxU = Math.max(u.work_hours, u.fun_hours, u.rest_hours, 1);
+    const lang = currentLang;
+    document.getElementById("workValue").textContent = fmtHours(u.work_hours, lang);
+    document.getElementById("funValue").textContent = fmtHours(u.fun_hours, lang);
+    document.getElementById("restValue").textContent = fmtHours(u.rest_hours, lang);
+    requestAnimationFrame(() => {
+      document.getElementById("workBar").style.height = Math.max(6,(u.work_hours/maxU)*100) + "%";
+      document.getElementById("funBar").style.height = Math.max(6,(u.fun_hours/maxU)*100) + "%";
+      document.getElementById("restBar").style.height = Math.max(6,(u.rest_hours/maxU)*100) + "%";
+    });
+    const t = LANG[currentLang] || LANG.fa;
+    const hoursMatch = data.prediction.text.match(/(\d+)/);
+    if (hoursMatch) {
+      const h = parseInt(hoursMatch[0]);
+      document.getElementById("predictionText").textContent = t.predictionText(h);
+    } else {
+      document.getElementById("predictionText").textContent = data.prediction.text;
+    }
+  }
+
+  function renderApps(data){
+    const list = document.getElementById("appList");
+    list.innerHTML = "";
+    const maxApp = Math.max(...data.apps.map(a => a.hours), 0.5);
+    data.apps.forEach(app => {
+      const c = COLOR_MAP[app.color] || COLOR_MAP.blue;
+      const item = document.createElement("div");
+      item.className = "app-item";
+      const hoursText = currentLang === 'fa' ? toPersianDigits(app.hours) + " ساعت" : app.hours + "h";
+      item.innerHTML =
+        '<div class="app-icon" style="background:' + c.tint + ';">' + app.icon + '</div>' +
+        '<div class="app-info">' +
+          '<div class="app-name-row"><span class="app-name">' + app.name + '</span><span class="app-time">' + hoursText + '</span></div>' +
+          '<div class="app-bar-wrap"><div class="app-bar" style="background:' + c.bar + ';"></div></div>' +
+        '</div>';
+      list.appendChild(item);
+      requestAnimationFrame(() => {
+        item.querySelector(".app-bar").style.width = Math.max(6,(app.hours/maxApp)*100) + "%";
+      });
+    });
+  }
+
+  function updateGoalProgress(){
+    const t = LANG[currentLang] || LANG.fa;
+    const percent = Math.min(100, Math.round((goalCurrent / goalTarget) * 100));
+    document.getElementById("goalFill").style.width = percent + "%";
+    const c = currentLang === 'fa' ? toPersianDigits(goalCurrent) : goalCurrent;
+    const g = currentLang === 'fa' ? toPersianDigits(goalTarget) : goalTarget;
+    const p = currentLang === 'fa' ? toPersianDigits(percent) : percent;
+    document.getElementById("goalText").innerHTML = t.goalText(p, c, g);
+  }
+
+  function renderGoal(data){
+    goalTarget = data.goal.target_hours;
+    goalCurrent = data.goal.current_hours;
+    document.getElementById("goalInput").value = goalTarget;
+    updateGoalProgress();
+  }
+
+  function render(data){
+    renderDonut(data.balance_score);
+    renderAlertAndSuggestions(data);
+    renderBars(data);
+    renderApps(data);
+    renderGoal(data);
+    loadSleepFromStorage();
+    loadProfileFromStorage();
+  }
+
+  async function loadData(){
+    const refreshBtn = document.getElementById("refreshBtn");
+    refreshBtn.classList.add("is-loading");
+    try {
+      const bedtime = document.getElementById('sleepTime').value;
+      const waketime = document.getElementById('wakeTime').value;
+      let sleepHours = null;
+      if (bedtime && waketime) {
+        const bed = new Date('2000-01-01T' + bedtime + ':00');
+        const wake = new Date('2000-01-01T' + waketime + ':00');
+        let diff = (wake-bed)/3600000; if(diff<0) diff += 24; sleepHours = diff;
+      }
+      const goalTarget = parseFloat(document.getElementById('goalInput').value) || 2;
+      const res = await fetch('/api/analyze', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({sleep_hours:sleepHours, goal_target:goalTarget})});
+      if(!res.ok) throw new Error('API error');
+      const data = await res.json();
+      render(data);
+      if(data.ml){
+        const backend = data.ml.backend === 'notebook_ml' ? 'ML' : 'Fallback';
+        document.getElementById('profileStatus').textContent = currentLang === 'fa' ? `تحلیل متصل به ${backend} — اطمینان مدل: ${Math.round(data.ml.confidence*100)}٪` : `Analysis connected to ${backend} — model confidence: ${Math.round(data.ml.confidence*100)}%`;
+      }
+    } catch (err) {
+      render(randomDemoData());
+      console.warn('Backend unavailable; demo data used.', err);
+    } finally {
+      refreshBtn.classList.remove("is-loading");
+    }
+  }
+
+  function loadSleepFromStorage() {
+    const stored = loadStoredData();
+    if (stored && userData.sleep) {
+      document.getElementById('sleepTime').value = userData.sleep.bedtime || '23:30';
+      document.getElementById('wakeTime').value = userData.sleep.waketime || '07:30';
+    }
+    updateSleepStats();
+  }
+
+  function updateSleepStats() {
+    const bedtime = document.getElementById('sleepTime').value;
+    const waketime = document.getElementById('wakeTime').value;
+    if (bedtime && waketime) {
+      const bed = new Date('2000-01-01T' + bedtime + ':00');
+      const wake = new Date('2000-01-01T' + waketime + ':00');
+      let diff = (wake - bed) / (1000 * 60 * 60);
+      if (diff < 0) diff += 24;
+      const hours = Math.floor(diff);
+      const mins = Math.round((diff - hours) * 60);
+      const durationText = currentLang === 'fa' 
+        ? (hours > 0 ? toPersianDigits(hours) + ' ساعت' : '') + (mins > 0 ? ' و ' + toPersianDigits(mins) + ' دقیقه' : '')
+        : hours + 'h ' + mins + 'm';
+      document.getElementById('sleepDuration').textContent = durationText;
+      let quality = 'good';
+      let qualityText = '';
+      const t = LANG[currentLang] || LANG.fa;
+      if (diff >= 7 && diff <= 9) { quality = 'good'; qualityText = t.sleepQualityMap.good; }
+      else if (diff >= 6 && diff < 7) { quality = 'ok'; qualityText = t.sleepQualityMap.ok; }
+      else if (diff >= 5 && diff < 6) { quality = 'warn'; qualityText = t.sleepQualityMap.warn; }
+      else { quality = 'danger'; qualityText = t.sleepQualityMap.danger; }
+      const qEl = document.getElementById('sleepQuality');
+      qEl.textContent = qualityText;
+      qEl.className = 'value ' + quality;
+      const best = new Date('2000-01-01T' + bedtime);
+      best.setHours(best.getHours() - 1);
+      const bh = best.getHours().toString().padStart(2,'0');
+      const bm = best.getMinutes().toString().padStart(2,'0');
+      document.getElementById('bestTime').textContent = bh + ':' + bm;
+      const cycles = Math.round(diff / 1.5);
+      document.getElementById('sleepCycles').textContent = (currentLang === 'fa' ? toPersianDigits(cycles) : cycles) + ' ' + (currentLang === 'fa' ? 'سیکل' : 'cycles');
+    }
+  }
+
+  function loadProfileFromStorage() {
+    const stored = loadStoredData();
+    if (stored && userData.profile) {
+      document.getElementById('userName').value = userData.profile.name || '';
+      document.getElementById('userAge').value = userData.profile.age || '';
+    }
+  }
+
+  function saveSleepSettings() {
+    const bedtime = document.getElementById('sleepTime').value;
+    const waketime = document.getElementById('wakeTime').value;
+    if (!userData) userData = {};
+    userData.sleep = { bedtime, waketime };
+    saveToStorage();
+    updateSleepStats();
+    showSaveIndicator();
+  }
+
+  function saveProfile() {
+    const name = document.getElementById('userName').value.trim();
+    const age = parseInt(document.getElementById('userAge').value);
+    if (!userData) userData = {};
+    userData.profile = { name, age: isNaN(age) ? '' : age };
+    saveToStorage();
+    showSaveIndicator();
+  }
+
+  function resetAllData() {
+    if (confirm(currentLang === 'fa' ? 'آیا مطمئن هستید؟ همه داده‌ها پاک می‌شوند.' : 'Are you sure? All data will be cleared.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      userData = {};
+      document.getElementById('userName').value = '';
+      document.getElementById('userAge').value = '';
+      document.getElementById('sleepTime').value = '23:30';
+      document.getElementById('wakeTime').value = '07:30';
+      updateSleepStats();
+      showSaveIndicator();
+    }
+  }
+
+  const body = document.body;
+  const themeToggle = document.getElementById("themeToggle");
+  themeToggle.addEventListener("click", () => {
+    const next = body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    body.setAttribute("data-theme", next);
+    applyLanguage();
+  });
+
+  document.getElementById("notifyBtn").addEventListener("click", async () => {
+    if(!("Notification" in window)){
+      alert("مرورگر شما از نوتیفیکیشن پشتیبانی نمی‌کند.");
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    if(permission === "granted"){
+      const t = LANG[currentLang] || LANG.fa;
+      const minutesText = document.getElementById("alertDesc").textContent;
+      new Notification("هشدار سلامت دیجیتال", { body: t.notifyBody(minutesText) });
+    }
+  });
+
+  const focusToggle = document.getElementById("focusToggle");
+  focusToggle.addEventListener("click", () => {
+    const nonCore = Array.from(document.querySelectorAll(".card")).filter(c => !c.classList.contains("core-card"));
+    const activating = !body.classList.contains("focus-mode");
+    if(activating){
+      nonCore.forEach(c => c.classList.add("hide-anim"));
+      setTimeout(() => nonCore.forEach(c => c.style.display = "none"), 300);
+      body.classList.add("focus-mode");
+      focusToggle.classList.add("is-active");
+    }else{
+      nonCore.forEach(c => c.style.display = "");
+      requestAnimationFrame(() => requestAnimationFrame(() => nonCore.forEach(c => c.classList.remove("hide-anim"))));
+      body.classList.remove("focus-mode");
+      focusToggle.classList.remove("is-active");
+    }
+    applyLanguage();
+  });
+
+  document.getElementById("setGoalBtn").addEventListener("click", () => {
+    const val = parseFloat(document.getElementById("goalInput").value);
+    if(!isNaN(val) && val > 0){
+      goalTarget = val;
+      if (!userData) userData = {};
+      if (!userData.goal) userData.goal = {};
+      userData.goal.target = goalTarget;
+      userData.goal.current = goalCurrent;
+      saveToStorage();
+      updateGoalProgress();
+    }
+  });
+
+  document.getElementById("refreshBtn").addEventListener("click", loadData);
+
+  document.getElementById("downloadReportBtn").addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    btn.setAttribute("disabled", "true");
+    const target = document.querySelector(".wrap");
+    html2canvas(target, {backgroundColor: getComputedStyle(body).getPropertyValue("--bg-1")}).then(canvas => {
+      const link = document.createElement("a");
+      link.download = "wellness-report.png";
+      link.href = canvas.toDataURL();
+      link.click();
+      btn.removeAttribute("disabled");
+    }).catch(() => btn.removeAttribute("disabled"));
+  });
+
+  document.getElementById('saveSleepBtn').addEventListener('click', () => { saveSleepSettings(); loadData(); });
+  document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+  document.getElementById('resetDataBtn').addEventListener('click', resetAllData);
+  document.getElementById('sleepTime').addEventListener('change', updateSleepStats);
+  document.getElementById('wakeTime').addEventListener('change', updateSleepStats);
+
+  document.getElementById('langSelect').addEventListener('change', function() {
+    setLang(this.value);
+  });
+
+  window.addEventListener("load", () => {
+    const savedLang = getLang();
+    setLang(savedLang);
+    document.getElementById('langSelect').value = savedLang;
+    loadData();
+  });
+</script>
+</body>
+</html>
+```
